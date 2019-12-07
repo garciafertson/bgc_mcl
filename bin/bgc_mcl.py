@@ -51,10 +51,10 @@ if __name__ == '__main__':
     subparser= parser.add_subparsers(help="sub-comand help:", dest='subparser_name')
     ######################################
     ###### PARSER 1 "porthomcl" subparser#
-    ortho_parser=suparser.add_parser('porthomcl',
-            description='Recieve BGC.gbk list and build clusters of othologue genes 
+    ortho_parser=subparser.add_parser('porthomcl',
+            description='Recieve BGC.gbk list and build clusters of othologue genes \
             inside the bgc set',
-            epilog='''for running call: \n
+            epilog='''for running call:
             bgc_mcl.py --list --folder ''')
     orthoinput= ortho_parser.add_argument_group('input options')
     orthoinput.add_argument('--list','-l',
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     mclinput = mcl_parser.add_argument_group('input options')
     mclinput.add_argument('--bgccogs',
             dest="bgccogs",
-            help="file with BGCcogs, to build BGC groups (output 8.all.ort.group from PorthoMCL)"
+            help="file with BGCcogs, to build BGC groups (output 8.all.ort.group from PorthoMCL)",
             metavar="FILE.TXT",
             default="8.all.ort.group")
     mclinput.add_argument('--list',"-l",
@@ -96,26 +96,32 @@ if __name__ == '__main__':
     mclinput.add_argument('--dir','-d',
             dest='dir',
             metavar='DIRECTORY',
-            help="path to directory containing the BGC.gbk files "
+            help="path to directory containing the BGC.gbk files",
             required=True)
     mcloptions = mcl_parser.add_argument_group('mcl options')
     mcloptions.add_argument('--inf_lower',
             dest='inf_lower',
-            metavar='INT',
-            help="set lower limit for Infilation parameter in MCL (default 1)",
-            default=2,
+            metavar='FLOAT',
+            help="set lower limit for Infilation parameter in MCL (default 1.2)",
+            default=1.2,
             type=float)
     mcloptions.add_argument('--inf_upper',
             dest='inf_upper',
+            metavar='FLOAT',
+            help='set upper limit for inflation parameter in MCL (default 4)',
+            default=4)
+    mcloptions.add_argument('--points',
+            dest='points',
             metavar='INT',
-            help='set upper limit for inflation parameter in MCL (default 5)',
-            default=6)
-    mcloptions.add_argument('--increment',
-            dest='increment',
-            metavar='INT',
-            help='set increment for inflation parameter in MCL scan',
+            help='set number of points to for scanning Inflation values, default 3',
+            default=3)
+    mcloptions.add_argument('--threads', '-t',
+            dest='threads',
+            metavar="INT",
+            help='set number of threads to employ in MCL (default 1)',
             default=1)
-    mclouput = mcl_parser.add_argument_group('output options',
+    mcloutput = mcl_parser.add_argument_group('output options')
+    mcloutput.add_argument("--output","-o",
             dest='output',
             metavar="PREFIX",
             help="prefix for MCL groups",

@@ -6,11 +6,19 @@ from scripts.proteins2fasta import gbk2faa
 
 # run porthoMCL
 def run_porthomcl(threads): #folder contains the path to BGC.gbk
-    path_porhtomcl=str(os.environ['PORTHOMCL']) enviroment variable with path to external program
-    cmd=[path_porthomcl+"porthomcl.sh", "-t", threads]
-    try:subprocess.call(cmd)
-    except: print("Plase set enviromental variable PORTHOMCL with path to <porthomcl.sh>")
-    else:print("Running porthomcl.sh, please be patient")
+    try:
+        path_porthomcl=str(os.environ['PORTHOMCL']) #enviroment variable with path to external program
+    except OSError: 
+        print("Please set enviromental varialble PORTHOMCL=/path/to/porthomcl/")
+    program=path_porthomcl+"/porthomcl.sh"
+    print(program)
+    threads=str(threads)
+    cmd=["bash", program, "-t", threads, "-f", "3"]
+    print("Running PorthoMCL, please wait...")
+    try:
+        subprocess.call(cmd)
+    except OSError:
+        print("Program <porthomcl.sh> not found")
 
 def porthomcl_analysis(bgclist, bgcdir, threads):
     #create "0.input_faa" folder
@@ -20,6 +28,7 @@ def porthomcl_analysis(bgclist, bgcdir, threads):
     #convert genbank files into fasta files 
     with open(bgclist, "r") as f:
         for line in f:
+            line=line.rstrip()
             root=line.split(".")[0]
             in_gbk=bgcdir+line
             out_faa="0.input_faa/"+root+".faa"
