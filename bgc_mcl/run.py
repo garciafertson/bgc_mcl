@@ -22,7 +22,10 @@ class Run:
         points=self.args.points
         outname=self.args.output
         threads=self.args.threads
-        network=portho2ntwk(bgccogs, bgclist, bgcdir, outname)
+        cutoff=self.args.cutoff
+        index=self.args.index
+        if cutoff < 0 and cutoff > 1: sys.exit("Error: --cutoff value out of range [0,1]")
+        network=portho2ntwk(bgccogs, bgclist, bgcdir, outname, sim_index, cutoff)
         mcl_scan(network,low,up,points,threads,outname)
     def pfammcl(self):
         bgclist=self.args.list

@@ -95,11 +95,12 @@ if __name__ == '__main__':
             metavar='FILE.TXT',
             help="list with filenames of Biosynthetic gene clusters in genbank format (BGC.gbk)",
             required=True)
-    mclinput.add_argument('--dir','-d',
-            dest='dir',
-            metavar='DIRECTORY',
-            help="path to directory containing the BGC.gbk files",
-            required=True)
+#dir argument not required in mcl analysis, it uses <0.input_faa> dir from porthomcl output
+#    mclinput.add_argument('--dir','-d',
+#            dest='dir',
+#            metavar='DIRECTORY',
+#            help="path to directory containing the BGC.gbk files",
+#            required=True)
     mcloptions = mcl_parser.add_argument_group('mcl options')
     mcloptions.add_argument('--inf_lower',
             dest='inf_lower',
@@ -122,6 +123,26 @@ if __name__ == '__main__':
             metavar="INT",
             help='set number of threads to employ in MCL (default 1)',
             default=1)
+    #add index calculation select from overlap_coefficient, 
+    #jaccard index(ji), duplication index(di), or lineal cobination of ji and di
+    #ref (K Lin et al., 2006)
+    ntwkoptions = mcl_parser.add_argument_group('network options'
+    ntwkoptions.add_argument('--sim_index', '-i',
+            dest='index',
+            metavar="INT",
+            help="specify an index to calculate network, (default 1)
+            1-overlap coefficient (oc) 
+            2-Jaccard index ji 
+            3-Duplication similarity()
+            all indexes return values between [0-1]",
+            default=1)
+    ntwkoptions.add_argument('--cutoff', "-c",
+        dest='cutoff',
+        metavar='FLOAT',
+        help="set minimum index value, between range [0-1], to keep in networks
+        default (0.2)",
+        default=0.2
+        )
     mcloutput = mcl_parser.add_argument_group('output options')
     mcloutput.add_argument("--output","-o",
             dest='output',

@@ -6,7 +6,16 @@ from collections import defaultdict
 from Bio import SeqIO
 import subprocess
 from scripts.proteins2fasta import fasta2pfam, pfam2list
+from scripts.sim_index import sim_index
 import os, subprocess
+
+def idxtype(index_type):
+    switcher={
+            1:"oc",
+            2:"ji",
+            3:"ds",
+            4:"jids"}
+    return(switcher[index_type])
 
 def run_mcl(infile, inflation, outfile,threads):
     out=outfile+".I_"+str(inflation)[0:3]+".txt"
@@ -18,43 +27,7 @@ def run_mcl(infile, inflation, outfile,threads):
     else:
         print("Running mcl program, Inflation value:", inflation)
 
-def jaccard_index(a,b):
-    #calculate jaccard index for pairs of bgc
-    a=set(a)
-    b=set(b)
-    ji=len(a.intersection(b))/len(a.union(b))
-    return(ji)
-def overlap_coef(a,b):
-    a=set(a)
-    b=set(b)
-    oc=len(a.intersection(b))/min(len(a),len(b))
-    return(oc)
-def domdupsim(a,b): #Measures the amount of duplication of a shared domain
-    #get elements in  union
-    union=set(a).union(set(b))
-    #count the number of times each domain exists in each set
-    count_a=defaultdict(int)
-    for element in a: #count number of times each element appears in a
-        count_a[element]+=1
-    count_b=defaultdict(int)
-    for element in b:
-        count_b[element]+=1
-    #calculate S and ref Kui Lin 2006
-    S=0
-    for dom in union:
-        S+= max(count_a[dom], count_b[dom])
-    #calculate D index [0.36 ,1]
-    exp=0
-    D=0
-    if S>0:
-        for dom in union:
-            x+= abs(count_a[dom]-count_b[dom])/S
-        D=np.e**exp
-        #D= (np.e**-x) - (x*(np.e**-x))
-        #D=1-sm
-    return(D)
-
-def portho2ntwk(bgccogs, bgclist, bgcdir, output):
+def portho2ntwk(bgccogs, bgclist, bgcdir, output, index_type, cutoff):
     #read groups of othologues from bgccogs 8.all.oth.group file
     #and create dict key<-fasta_id, value <-line_number or group number
     ortgroup_dict={}
@@ -74,26 +47,25 @@ def portho2ntwk(bgccogs, bgclist, bgcdir, output):
             root_name=".".join(infile.split(".")[0:-1]) #remove .ext
             infile=root_name+".faa"
             for record in SeqIO.parse("0.input_faa/"+infile, "fasta"):
+    ##the following line assumes proteins2fasta format ##modify if other kind of fasta is present
                 gen_id="|".join([root_name,record.id.split("|")[2]])
                 if gen_id in ortgroup_dict.keys():
                     bgc_dict[infile].append(str(ortgroup_dict[gen_id]))
                 else:
                     bgc_dict[infile].append(gen_id)
-    #construct jaccard index network file <network.abx>
+    #construct network file <network.abx> file with specified index
     names=[*bgc_dict] #unpack iterable dict keys
     dim=len(names)
-    network=output+".oc_network.abx"
-    cutoff = 0.5 #set provisional cutoff
+    network=output+"."+idxtype(index_type)+"_network.abx"
     with open(network,"w") as out:
         for i in range(dim):
             for j in range(i+1,dim):
-                oc=ji=0
+                index=0
                 a=bgc_dict[names[i]]
                 b=bgc_dict[names[j]]
                 if len(a)>0 and len(b)>0:
-                    ji=jaccard_index(a,b)
-                    oc=overlap_coef(a,b)
-                if oc > cutoff:
+                    index=sim_index(index_type, a ,b)
+                if index > cutoff:
                     #print(len(a.intersection(b)))
                     out.write("%s\t%s\t%s\n" %(names[i], names[j], oc))
     #scan a range of Inflations values to run MCL algorithm on distance matrix
