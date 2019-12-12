@@ -2,7 +2,9 @@
 import subprocess
 import os, sys
 from bgc_mcl.porthomcl import porthomcl_analysis
-from bgc_mcl.mcl import mcl_scan
+from bgc_mcl.mcl import portho2ntwk, gbk2pfam2ntwk, mcl_scan 
+
+
 class Run:
     def __init__(self, args):
         self.args=args
@@ -20,8 +22,19 @@ class Run:
         points=self.args.points
         outname=self.args.output
         threads=self.args.threads
-        mcl_scan(bgccogs, bgclist, bgcdir, low, up, points, outname, threads)
-        
+        network=portho2ntwk(bgccogs, bgclist, bgcdir, outname)
+        mcl_scan(network,low,up,points,threads,outname)
+    def pfammcl(self):
+        bgclist=self.args.list
+        bgcdir=self.args.dir
+        outname=self.args.output
+        low=self.args.inf_lower
+        up=self.args.inf_upper
+        points=self.args.points
+        threads=self.args.threads
+        network=gbk2pfam2ntwk(bgclist, outname)
+        mcl_scan(network, low,up,points, threads)
+
     def main(self):
         if self.args.subparser_name=="porthomcl":
             self.porthomcl()
@@ -29,6 +42,8 @@ class Run:
         elif self.args.subparser_name=="mcl":
             self.mcl()
             print("running MCL on BGC.gbk using %s BGCcogs" %self.args.list)
-
+        elif self.args.subparser_name=="pfammcl":
+            self.pfammcl()
+            print("runing MCL clustering on BGC.gbk files %s using PFAM content" %self.args.list)
 
 

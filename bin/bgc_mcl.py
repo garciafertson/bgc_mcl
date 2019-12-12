@@ -39,6 +39,8 @@ def phelp():
     bgc_mcl.py porthomcl -h
 
     bgc_mcl.py mcl -h
+
+    bgc_mcl.py pfammcl -h
     """)
 
 ##the next section add parsers and subparser to the program
@@ -126,6 +128,54 @@ if __name__ == '__main__':
             metavar="PREFIX",
             help="prefix for MCL groups",
             default="output")
+    ######################################
+    ###### PARSER 3 "pfammcl" subparser######
+    pfam_parser = subparser.add_parser( 'pfammcl',
+        description='Recieve BGC.gbk list and build groups MCL based on similar PFAM content',
+        help='Build groups based on similar PFAM content using MCL clustering',
+        epilog='''
+    for running call:\n
+    bgc_mcl.py find --list --folder BGC_type \n  ''')
+    pfaminput = pfam_parser.add_argument_group('input options')
+    pfaminput.add_argument('--list',"-l",
+            dest='list',
+            metavar='FILE.TXT',
+            help="list with filenames of Biosynthetic gene clusters in genbank format (BGC.gbk)",
+            required=True)
+    pfaminput.add_argument('--dir','-d',
+            dest='dir',
+            metavar='DIRECTORY',
+            help="path to directory containing the BGC.gbk files",
+            required=True)
+    pfamoptions = pfam_parser.add_argument_group('mcl options')
+    pfamoptions.add_argument('--inf_lower',
+            dest='inf_lower',
+            metavar='FLOAT',
+            help="set lower limit for Infilation parameter in MCL (default 1.2)",
+            default=1.2,
+            type=float)
+    pfamoptions.add_argument('--inf_upper',
+            dest='inf_upper',
+            metavar='FLOAT',
+            help='set upper limit for inflation parameter in MCL (default 4)',
+            default=4)
+    pfamoptions.add_argument('--points',
+            dest='points',
+            metavar='INT',
+            help='set number of points to for scanning Inflation values, default 3',
+            default=3)
+    pfamoptions.add_argument('--threads', '-t',
+            dest='threads',
+            metavar="INT",
+            help='set number of threads to employ in MCL (default 1)',
+            default=1)
+    pfamoutput = pfam_parser.add_argument_group('output options')
+    pfamoutput.add_argument("--output","-o",
+            dest='output',
+            metavar="PREFIX",
+            help="prefix for MCL groups",
+            default="output")
+
 
     #check whether --help is needed
     if (len(sys.argv)==1 or sys.argv[1]== '-h' or sys.argv[1]== '--help'):

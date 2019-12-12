@@ -29,7 +29,7 @@ def porthomcl_analysis(bgclist, bgcdir, threads):
     with open(bgclist, "r") as f:
         for line in f:
             line=line.rstrip()
-            root=line.split(".")[0]
+            root=".".join(line.split(".")[0:-1])
             in_gbk=bgcdir+line
             out_faa="0.input_faa/"+root+".faa"
             gbk2faa(in_gbk, out_faa)
