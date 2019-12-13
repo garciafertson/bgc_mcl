@@ -48,6 +48,7 @@ def fasta2pfam(infile, outfile):
 from Bio import SearchIO
 import pandas as pd
 import numpy as np
+
 def pfam2list(infile):
     """
     Convert hmmscan tabular format into python list

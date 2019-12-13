@@ -15,17 +15,16 @@ class Run:
         porthomcl_analysis(bgclist, bgcdir, threads)
     def mcl(self):
         bgclist=self.args.list
-        bgcdir=self.args.dir
         bgccogs=self.args.bgccogs
         low=self.args.inf_lower
         up=self.args.inf_upper
         points=self.args.points
         outname=self.args.output
         threads=self.args.threads
-        cutoff=self.args.cutoff
-        index=self.args.index
+        cutoff=float(self.args.cutoff)
+        sim_index=int(self.args.sim_index)
         if cutoff < 0 and cutoff > 1: sys.exit("Error: --cutoff value out of range [0,1]")
-        network=portho2ntwk(bgccogs, bgclist, bgcdir, outname, sim_index, cutoff)
+        network=portho2ntwk(bgccogs, bgclist, outname, sim_index, cutoff)
         mcl_scan(network,low,up,points,threads,outname)
     def pfammcl(self):
         bgclist=self.args.list

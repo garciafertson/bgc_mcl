@@ -27,7 +27,7 @@ def run_mcl(infile, inflation, outfile,threads):
     else:
         print("Running mcl program, Inflation value:", inflation)
 
-def portho2ntwk(bgccogs, bgclist, bgcdir, output, index_type, cutoff):
+def portho2ntwk(bgccogs, bgclist, output, index_type, cutoff):
     #read groups of othologues from bgccogs 8.all.oth.group file
     #and create dict key<-fasta_id, value <-line_number or group number
     ortgroup_dict={}
@@ -64,10 +64,10 @@ def portho2ntwk(bgccogs, bgclist, bgcdir, output, index_type, cutoff):
                 a=bgc_dict[names[i]]
                 b=bgc_dict[names[j]]
                 if len(a)>0 and len(b)>0:
-                    index=sim_index(index_type, a ,b)
+                    index=sim_index(index_type, a ,b).main()
                 if index > cutoff:
                     #print(len(a.intersection(b)))
-                    out.write("%s\t%s\t%s\n" %(names[i], names[j], oc))
+                    out.write("%s\t%s\t%s\n" %(names[i], names[j], index))
     #scan a range of Inflations values to run MCL algorithm on distance matrix
     return(network)
 
