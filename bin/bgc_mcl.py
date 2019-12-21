@@ -209,7 +209,8 @@ if __name__ == '__main__':
             dest='output',
             metavar="PREFIX",
             help="prefix for MCL groups",
-            default="output")
+            default="output.pfam")
+
 
 
     #check whether --help is needed

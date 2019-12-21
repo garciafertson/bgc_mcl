@@ -75,7 +75,10 @@ def pfam2list(infile):
                 'bitscore' : float(best_hsp.bitscore)
             })
         domains += sorted(query_domains, key=lambda x: x['domain_start'])
+    pfam_list=[]
+    for dom in domains:
+        pfam_list.append(dom["pfam_id"])
 
     print('Domain hits total: {}'.format(len(domains)))
-    return(domains)
+    return(pfam_list)
 

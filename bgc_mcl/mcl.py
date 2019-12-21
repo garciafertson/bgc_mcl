@@ -85,21 +85,22 @@ def gbk2pfam2ntwk(bgclist, outname, index_type, cutoff): #reads faa files from <
             fasta_name="0.input_faa/"+root_name+".faa"
             pfam_name="0.input_pfam/"+root_name+".dom.tbl"
             tsv_name="0.input_pfam/"+root_name+".tsv"
-            fasta2pfam(fasta_name,pfam_name)
-            try: pfam2tsv(pfam_name, tsv_name) #output tsv file with pfams
-            except: continue
-            bgcpfam_dict[root_name]=tsv2list(tsv_name)
+#            fasta2pfam(fasta_name,pfam_name)
+            bgcpfam_dict[root_name]=pfam2list(pfam_name) #return list with pfams in bgc
+            #except: continue
+            #bgcpfam_dict[root_name]=tsv2list(tsv_name)
     names=[*bgcpfam_dict]
     dim=len(names)
-    network=root_name+"pfam_ntwk.abx"
+    network="pfam_ntwk.abx"
     with open(network,"w") as out:
-        for i, in range(dim):
+        for i in range(dim):
             for j in range(i+1,dim):
                 index=0
                 list_a=bgcpfam_dict[names[i]]
                 list_b=bgcpfam_dict[names[j]]
+                print(list_a)
                 if len(list_a)>0 and len(list_b)>0:
-                    index=sim_index(index_type, a ,b).main()
+                    index=sim_index(index_type, list_a ,list_b).main()
                 if index > cutoff:
                     out.write("%s\t%s\t%s\n" %(names[i], names[j], index))
     return(network)

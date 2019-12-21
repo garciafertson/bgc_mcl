@@ -37,7 +37,7 @@ class Run:
         sim_index=int(self.args.sim_index)
         cutoff=float(self.args.cutoff)
         network=gbk2pfam2ntwk(bgclist, outname, sim_index, cutoff)
-        mcl_scan(network, low,up,points, threads)
+        mcl_scan(network, low,up,points, threads,outname)
 
     def main(self):
         if self.args.subparser_name=="porthomcl":
