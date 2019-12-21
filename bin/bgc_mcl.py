@@ -26,11 +26,11 @@ def print_header():
 
 def phelp():
     print("""
-    the program recieve a list with BGC.gbk files
-    run PorthoMCL to retrieve clusters_of_orthologue_genes between them (BGCcogs)
+    the program recieves a list with BGC.gbk files and then
+    runs PorthoMCL to retrieve clusters_of_orthologue_genes between them (BGCcogs)
 
-    after BGCcogs analysis calulate paired Jaccard index between pairs of BGC.gbk
-    and then run MCL to build groups of BGC.gbk files with similar BGCcog content
+    after BGCcogs analysis calulate a similarity index between all possible pairs
+    of BGC.gbk and then run MCL to build groups with similar BGCcog content
     
     Ouputs a text file with the filenames of groups constructed
 
@@ -126,23 +126,22 @@ if __name__ == '__main__':
     #add index calculation select from overlap_coefficient, 
     #jaccard index(ji), duplication index(di), or lineal cobination of ji and di
     #ref (K Lin et al., 2006)
-    ntwkoptions = mcl_parser.add_argument_group('network options'
+    ntwkoptions = mcl_parser.add_argument_group('network options')
     ntwkoptions.add_argument('--sim_index', '-i',
-            dest='index',
+            dest='sim_index',
             metavar="INT",
-            help="specify an index to calculate network, (default 1)
-            1-overlap coefficient (oc) 
-            2-Jaccard index ji 
-            3-Duplication similarity()
+            help="specify a similarity index type to calculate network, (default 1) \
+            1-overlap coefficient \
+            2-Jaccard index ji \
+            3-Duplication similarity()\
             all indexes return values between [0-1]",
             default=1)
     ntwkoptions.add_argument('--cutoff', "-c",
         dest='cutoff',
         metavar='FLOAT',
-        help="set minimum index value, between range [0-1], to keep in networks
-        default (0.2)",
-        default=0.2
-        )
+        help="set minimum index value to keep in networks, between range [0-1] \
+        (default 0.2)",
+        default=0.2,)
     mcloutput = mcl_parser.add_argument_group('output options')
     mcloutput.add_argument("--output","-o",
             dest='output',
@@ -183,13 +182,28 @@ if __name__ == '__main__':
     pfamoptions.add_argument('--points',
             dest='points',
             metavar='INT',
-            help='set number of points to for scanning Inflation values, default 3',
+            help='set number of points for scanning Inflation values, (default 3)',
             default=3)
     pfamoptions.add_argument('--threads', '-t',
             dest='threads',
             metavar="INT",
             help='set number of threads to employ in MCL (default 1)',
             default=1)
+    pfamoptions.add_argument('--sim_index', '-i',
+            dest='sim_index',
+            metavar="INT",
+            help="specify a similarity index type to calculate network, (default 1) \
+            1-overlap coefficient \
+            2-Jaccard index ji \
+            3-Duplication similarity()\
+            all indexes return values between [0-1]",
+            default=1)
+    pfamoptions.add_argument('--cutoff', "-c",
+        dest='cutoff',
+        metavar='FLOAT',
+        help="set minimum index value to keep in networks, between range [0-1] \
+        (default 0.2)",
+        default=0.2,)
     pfamoutput = pfam_parser.add_argument_group('output options')
     pfamoutput.add_argument("--output","-o",
             dest='output',

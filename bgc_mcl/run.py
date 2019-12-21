@@ -34,7 +34,9 @@ class Run:
         up=self.args.inf_upper
         points=self.args.points
         threads=self.args.threads
-        network=gbk2pfam2ntwk(bgclist, outname)
+        sim_index=int(self.args.sim_index)
+        cutoff=float(self.args.cutoff)
+        network=gbk2pfam2ntwk(bgclist, outname, sim_index, cutoff)
         mcl_scan(network, low,up,points, threads)
 
     def main(self):

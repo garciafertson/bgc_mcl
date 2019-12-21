@@ -71,38 +71,37 @@ def portho2ntwk(bgccogs, bgclist, output, index_type, cutoff):
     #scan a range of Inflations values to run MCL algorithm on distance matrix
     return(network)
 
-def gbk2pfam2ntwk(bgclist, outname, nohmm): #reads faa files from <0.input_faa> folder
+def gbk2pfam2ntwk(bgclist, outname, index_type, cutoff): #reads faa files from <0.input_faa> folder
     #open bgc file list and save list of names (remove gbk extension)
     bgcpfam_dict=defaultdict(list)
     #create "0.input_faa" folder
-    try: os.makedirs(outname+"_pfam")
-    except OSError: print ("Creation of the directory <output_pfam> failed")
-    else: print ("Successfully created the directory <output_pfam>")
+    try: os.makedirs("0.input_pfam")
+    except OSError: print ("Creation of the directory <0.input_pfam> failed")
+    else: print ("Successfully created the directory <0.input_pfam>")
     with open(bgclist, "r") as f:
         for line in f:
             line=line.rstrip()
-            root_name=".".join(line.split(".")[0:-1]) #remove .ext
+            root_name=".".join(line.split(".")[0:-1]) #remove ".gbk" extension
             fasta_name="0.input_faa/"+root_name+".faa"
-            pfam_name=outname+"_pfam/"+root_name+".dom.tbl"
-            tsv_name=outname+"_pfam/"+root_name+".tsv"
+            pfam_name="0.input_pfam/"+root_name+".dom.tbl"
+            tsv_name="0.input_pfam/"+root_name+".tsv"
             fasta2pfam(fasta_name,pfam_name)
             try: pfam2tsv(pfam_name, tsv_name) #output tsv file with pfams
             except: continue
             bgcpfam_dict[root_name]=tsv2list(tsv_name)
     names=[*bgcpfam_dict]
     dim=len(names)
-    network=root_name+"pfam_network.abx"
-    cutoff=0
+    network=root_name+"pfam_ntwk.abx"
     with open(network,"w") as out:
         for i, in range(dim):
             for j in range(i+1,dim):
-                Dup_index=0
+                index=0
                 list_a=bgcpfam_dict[names[i]]
                 list_b=bgcpfam_dict[names[j]]
-                if len(list_a)>0 or len(list_b)>0:
-                    Dup=domdupsim(list_a,list_b)
-                if Dup > cutoff:
-                    out.write("%s\t%s\t%\n"%(names[i],names[j],Dup))
+                if len(list_a)>0 and len(list_b)>0:
+                    index=sim_index(index_type, a ,b).main()
+                if index > cutoff:
+                    out.write("%s\t%s\t%s\n" %(names[i], names[j], index))
     return(network)
 
 def mcl_scan(network, low, up, points, threads, output):
